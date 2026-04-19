@@ -35,8 +35,17 @@ public abstract class Actor extends ImageView{
 		return list;
 	}
 	
-	public <A extends Actor> java.util.List<A> getOneIntersectingObject(java.lang.Class<A> cls){
-		return new ArrayList<A>();
+	public <A extends Actor> A getOneIntersectingObject(java.lang.Class<A> cls){
+		ArrayList<A> list = new ArrayList<>();
+		for (Node n : getParent().getChildrenUnmodifiable()) {
+			if (n != this && cls.isInstance(n)) {
+				Actor a = (Actor) n;
+				if (a.getBoundsInParent().intersects(this.getBoundsInParent())) {
+					return (A) a;
+				}
+			}
+		}
+		return null;
 	}
 	
 	public double getWidth() {
