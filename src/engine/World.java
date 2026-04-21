@@ -6,6 +6,7 @@ import java.util.List;
 import javafx.animation.AnimationTimer;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
@@ -16,10 +17,12 @@ public abstract class World extends Pane{
 	ArrayList<KeyCode> keys;
 	boolean widthSet;
 	boolean heightSet;
+	boolean initialized;
 	
 	public World() {
 		widthSet = false;
 		heightSet = false;
+		initialized = false;
 		keys = new ArrayList<>();
 		isRunning = false;
 		HeightListener hListen = new HeightListener();
@@ -29,11 +32,17 @@ public abstract class World extends Pane{
 		SceneListener sListen = new SceneListener();
 		sceneProperty().addListener(sListen);
 		setOnKeyPressed(e -> {
-			keys.add(e.getCode());
+			if (keys.contains(e.getCode()) == false) {
+				KeyCode code = e.getCode();
+				keys.add(code);
+			}
 		});
 		
 		setOnKeyReleased(e -> {
-			keys.remove(e.getCode());
+			if (keys.contains(e.getCode()) == true) {
+				KeyCode code = e.getCode();
+				keys.remove(code);
+			}
 		});
 		
 		myTimer = new MyAnimationTimer();
@@ -42,15 +51,15 @@ public abstract class World extends Pane{
 	public abstract void act(long now) ;
 	
 	public void add(Actor actor) {
-		add(actor);
+		getChildren().add(actor);
 		actor.addedToWorld();
 	}
 	
 	public <A extends Actor> java.util.List<A> getObjects(java.lang.Class<A> cls){
-		ArrayList<A> actors = new ArrayList<A>();
-		for (A actor: actors) {
+		List<A> actors = new ArrayList<A>();
+		for (Node actor: getChildren()) {
 			if (cls.isInstance(actor)) {
-				actors.add(actor);
+				actors.add(cls.cast(actor));
 			}
 		}
 		return actors;
@@ -58,10 +67,10 @@ public abstract class World extends Pane{
 	
 	public <A extends Actor> java.util.List<A> getObjectsAt(double x, double y, java.lang.Class<A> cls){
 		ArrayList<A> actors = new ArrayList<A>();
-		for (A actor: actors) {
+		for (Node actor: getChildren()) {
 			if (cls.isInstance(actor)) {
-				if (actor.getX() == x && actor.getY() == y) {
-					actors.add(actor);
+				if (actor.getBoundsInParent().contains(x, y)) {
+					actors.add(cls.cast(actor));
 				}
 			}
 		}
@@ -85,15 +94,17 @@ public abstract class World extends Pane{
 	public abstract void onDimensionsInitialized();
 	
 	public void remove(Actor actor) {
-		
+		getChildren().remove(actor);
 	}
 	
 	public void start() {
-		
+		myTimer.start();
+		isRunning = true;
 	}
 	
 	public void stop() {
-		
+		myTimer.stop();
+		isRunning = false;
 	}
 	
 	private class HeightListener implements ChangeListener<Number> {
@@ -104,7 +115,8 @@ public abstract class World extends Pane{
 				heightSet = true;
 				
 			}
-			if (heightSet && widthSet) {
+			if (heightSet && widthSet && initialized == false) {
+				initialized = true;
 				onDimensionsInitialized();
 			}
 			
@@ -120,7 +132,8 @@ public abstract class World extends Pane{
 				widthSet = true;
 				
 			}
-			if (heightSet && widthSet) {
+			if (heightSet && widthSet && initialized == false) {
+				initialized = true;
 				onDimensionsInitialized();
 			}
 			
@@ -133,6 +146,7 @@ public abstract class World extends Pane{
 		@Override
 		public void changed(ObservableValue<? extends Scene> observable, Scene oldScene, Scene newScene) {
 			if (newScene != null) {
+
 				requestFocus();
 			}
 			

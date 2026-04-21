@@ -19,7 +19,7 @@ public abstract class Actor extends ImageView{
 	}
 	
 	public double getHeight() {
-		return getBoundsInLocal().getHeight();
+		return getBoundsInParent().getHeight();
 	}
 	
 	public <A extends Actor> java.util.List<A> getIntersectingObjects(java.lang.Class<A> cls){
@@ -49,7 +49,7 @@ public abstract class Actor extends ImageView{
 	}
 	
 	public double getWidth() {
-		return getBoundsInLocal().getWidth();
+		return getBoundsInParent().getWidth();
 	}
 	
 	public World getWorld() {
