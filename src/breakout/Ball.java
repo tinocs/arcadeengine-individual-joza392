@@ -18,6 +18,10 @@ public class Ball extends Actor{
 			dy = -dy;
 		}
 		
+		if (getOneIntersectingObject(Paddle.class) != null) {
+			dy = -dy;
+		}
+		
 	}
 	
 	public Ball() {

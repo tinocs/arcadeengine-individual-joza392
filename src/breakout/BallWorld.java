@@ -3,6 +3,10 @@ package breakout;
 import engine.World;
 
 public class BallWorld extends World{
+	
+	public BallWorld() {
+		setPrefSize(800, 600);
+	}
 
 	@Override
 	public void act(long now) {
@@ -12,7 +16,15 @@ public class BallWorld extends World{
 
 	@Override
 	public void onDimensionsInitialized() {
-		// TODO Auto-generated method stub
+		Ball b = new Ball();
+		add(b);
+		b.setX(getWidth()/2);
+		b.setY(getHeight()/2);
+		
+		Paddle p = new Paddle();
+		add(p);
+		p.setX(getWidth()/2);
+		p.setY(3 * getHeight() /4);
 		
 	}
 
