@@ -1,6 +1,8 @@
 package breakout;
 
 import engine.World;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 
 public class BallWorld extends World{
 	
@@ -26,6 +28,13 @@ public class BallWorld extends World{
 		p.setX(getWidth()/2);
 		p.setY(3 * getHeight() /4);
 		
+		
+		setOnMouseMoved(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				p.setX(event.getX());
+			}});
+
 	}
 
 	

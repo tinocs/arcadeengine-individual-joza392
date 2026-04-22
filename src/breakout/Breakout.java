@@ -20,8 +20,15 @@ public class Breakout extends Application{
 		Scene scene = new Scene(root);
 		root.setCenter(world);
 		world.start();
+		
+		
+		
+		
+		
 		stage.setScene(scene);
 		stage.show();
+		
+		
 	}
 
 }
