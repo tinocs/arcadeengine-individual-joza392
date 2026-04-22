@@ -11,6 +11,7 @@ public class Paddle extends Actor{
 		Image img = new Image(path);
 		setImage(img);
 	}
+	
 	@Override
 	public void act(long now) {
 		

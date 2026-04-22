@@ -22,6 +22,15 @@ public class Ball extends Actor{
 			dy = -dy;
 		}
 		
+		if (getOneIntersectingObject(Brick.class) != null) {
+			Brick brick = getOneIntersectingObject(Brick.class);
+			if (getX() >= brick.getX() - brick.getWidth()/2 && getX() <= brick.getX() + brick.getWidth()/2) {
+				dy = -dy;
+			}else if (getY() >= brick.getY() - brick.getHeight()/2 && getY() <= brick.getY() + brick.getHeight()/2) {
+				dx = -dx;
+			}
+		}
+		
 	}
 	
 	public Ball() {
