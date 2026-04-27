@@ -8,6 +8,7 @@ import engine.World;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -15,6 +16,8 @@ public class BallWorld extends World{
 	
 	private Score score;
 	private int level;
+	private Lives lives;
+	private Ball b;
 	
 	public BallWorld() {
 		setPrefSize(800, 600);
@@ -22,6 +25,23 @@ public class BallWorld extends World{
 
 	@Override
 	public void act(long now) {
+		if (getLives().getLives() <= 0) {
+			Text gameLost = new Text("Game Over! press any key to go back");
+			gameLost.setFont(new Font(20));
+			gameLost.setX(getWidth()/2);
+			gameLost.setY(getHeight()/2);
+			getChildren().add(gameLost);
+			setOnKeyPressed(e -> {
+				Stage s = (Stage) getScene().getWindow();
+				Breakout b = new Breakout();
+				try {
+					b.start(s);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			});
+		}
 		boolean zeroBricks = true;
 		for(Node n: getChildren()) {
 			if (n instanceof Brick) {
@@ -33,6 +53,7 @@ public class BallWorld extends World{
 			level++;
 			if(level >=3) {
 				Text gameOver = new Text("Game Over! press any key to go back");
+				gameOver.setFont(new Font(20));
 				gameOver.setX(getWidth()/2);
 				gameOver.setY(getHeight()/2);
 				getChildren().add(gameOver);
@@ -48,6 +69,8 @@ public class BallWorld extends World{
 				});
 				
 			}else {
+				b.setX(getWidth()/2);
+				b.setY(3 * getHeight()/4 - 20);
 				int r = 0;
 				int c = 0;
 				File f = new File("src/breakout/Level " + level + ".txt");
@@ -82,10 +105,10 @@ public class BallWorld extends World{
 	@Override
 	public void onDimensionsInitialized() {
 		level = 1;
-		Ball b = new Ball();
+		b = new Ball();
 		add(b);
 		b.setX(getWidth()/2);
-		b.setY(getHeight()/2);
+		b.setY(3 * getHeight()/4 - 20);
 		
 		Paddle p = new Paddle();
 		add(p);
@@ -101,10 +124,14 @@ public class BallWorld extends World{
 			}});
 		
 		score = new Score();
-		score.setX(getWidth()/2 - 50);
+		score.setX(getWidth()/2 + 50);
 		score.setY(getHeight()/8);
 		getChildren().add(score);
 		
+		lives = new Lives();
+		lives.setX(getWidth()/2 - 50);
+		lives.setY(getHeight()/8);
+		getChildren().add(lives);
 		
 		int r = 0;
 		int c = 0;
@@ -140,6 +167,10 @@ public class BallWorld extends World{
 	
 	public Score getScore() {
 		return score;
+	}
+	
+	public Lives getLives() {
+		return lives;
 	}
 
 
