@@ -5,6 +5,8 @@ import engine.Sound;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+import javafx.util.Duration;
+import javafx.animation.FadeTransition;
 
 public class Ball extends Actor{
 
@@ -58,8 +60,15 @@ public class Ball extends Actor{
 					Brick brick = getOneIntersectingObject(Brick.class);
 					Sound hitBrickSound = new Sound("breakoutresources/brick_hit.wav");
 					hitBrickSound.play();
-					
-					
+					BallWorld w = (BallWorld) getWorld();
+					FadeTransition ft = new FadeTransition(Duration.millis(100), brick);
+					ft.setFromValue(1.0);
+					ft.setToValue(0.0);
+
+					ft.play();
+					ft.setOnFinished(e ->{
+						w.remove(brick);
+					});
 					
 					if (getX() >= brick.getX() - brick.getWidth()/2 && getX() <= brick.getX() + brick.getWidth()/2) {
 						
@@ -73,9 +82,9 @@ public class Ball extends Actor{
 						dy = -dy;
 					}
 					
-					BallWorld w = (BallWorld) getWorld();
+					
 					w.getScore().setScore(w.getScore().getScore() + 100);
-					w.remove(brick);
+					
 				}
 			}
 		}
