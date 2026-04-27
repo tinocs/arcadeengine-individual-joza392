@@ -8,6 +8,9 @@ import engine.Sound;
 import engine.World;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -37,25 +40,27 @@ public class BallWorld extends World{
 		if (isPaused == false) {
 			
 			if (getLives().getLives() <= 0 && lostShown == false) {
-				Text gameLost = new Text("Game Lost! press any key to go back");
 				isOver = true;
 				Sound gameLostSound = new Sound("breakoutresources/game_lost.wav");
 				gameLostSound.play();
-				gameLost.setFont(new Font(20));
-				gameLost.setX(getWidth()/2);
-				gameLost.setY(getHeight()/2);
-				getChildren().add(gameLost);
+				
 				lostShown = true;
-				setOnKeyPressed(e -> {
-					Stage s = (Stage) getScene().getWindow();
-					Breakout b = new Breakout();
-					try {
-						b.start(s);
-					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				});
+				
+				String message = "Game Over. You Lose.";  
+			    Alert a = new Alert(AlertType.INFORMATION, message, ButtonType.OK);  
+			    a.showAndWait(); 
+				
+				Stage s = (Stage) getScene().getWindow();
+				Breakout b = new Breakout();
+				try {
+					b.start(s);
+					return;
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					return;
+				}
+				
 			}
 			
 			boolean zeroBricks = true;
@@ -68,24 +73,25 @@ public class BallWorld extends World{
 			if (zeroBricks == true) {
 				level++;
 				if(level >=3) {
-					Text gameWon = new Text("Game Won! press any key to go back");
 					Sound gameWonSound = new Sound("breakoutresources/game_won.wav");
 					gameWonSound.play();
 					isOver = true;
-					gameWon.setFont(new Font(20));
-					gameWon.setX(getWidth()/2);
-					gameWon.setY(getHeight()/2);
-					getChildren().add(gameWon);
-					setOnKeyPressed(e -> {
-						Stage s = (Stage) getScene().getWindow();
-						Breakout b = new Breakout();
-						try {
-							b.start(s);
-						} catch (Exception e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					});
+					
+					String message = "You Win!";  
+				    Alert a = new Alert(AlertType.INFORMATION, message, ButtonType.OK);  
+				    a.showAndWait(); 
+					
+					Stage s = (Stage) getScene().getWindow();
+					Breakout b = new Breakout();
+					try {
+						b.start(s);
+						return;
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						return;
+					}
+						
 					
 				}else {
 					int r = 0;

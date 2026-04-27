@@ -12,6 +12,7 @@ public class Ball extends Actor{
 
 	private int dx;
 	private int dy;
+	private Paddle p;
 	@Override
 	
 	public void act(long now) {
@@ -43,7 +44,7 @@ public class Ball extends Actor{
 					
 					w.getLives().setLives(w.getLives().getLives() - 1);
 					
-					setX(getWorld().getWidth() / 2);
+					setX(p.getX() + p.getImage().getWidth()/2);
 				    setY(3 * getWorld().getHeight()/4 - 20);
 	
 				    dx = 5;
@@ -51,6 +52,7 @@ public class Ball extends Actor{
 				}
 				
 				if (getOneIntersectingObject(Paddle.class) != null) {
+					p = (Paddle) getOneIntersectingObject(Paddle.class);
 					Sound bounceSound = new Sound("breakoutresources/ball_bounce.wav");
 					bounceSound.play();
 					dy = -dy;
@@ -96,7 +98,7 @@ public class Ball extends Actor{
 		Image img = new Image(path);
 		setImage(img);
 		dx = 5;
-		dy = 5;
+		dy = -5;
 	}
 
 }
