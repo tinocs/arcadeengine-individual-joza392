@@ -5,10 +5,16 @@ import javafx.scene.image.Image;
 
 public class Brick extends Actor{
 	
-	public Brick() {
-		String path = getClass().getClassLoader().getResource("breakoutresources/brick.png").toString();
-		Image img = new Image(path);
-		setImage(img);
+	public Brick(char num) {
+		if (num == '1') {
+			String path = getClass().getClassLoader().getResource("breakoutresources/brick.png").toString();
+			Image img = new Image(path);
+			setImage(img);
+		}else if (num == '2') {
+			String path = getClass().getClassLoader().getResource("breakoutresources/brick2.png").toString();
+			Image img = new Image(path);
+			setImage(img);
+		}
 	}
 
 	@Override
@@ -16,5 +22,7 @@ public class Brick extends Actor{
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
 	
 }

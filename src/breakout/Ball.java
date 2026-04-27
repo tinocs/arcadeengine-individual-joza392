@@ -40,6 +40,7 @@ public class Ball extends Actor{
 			
 			BallWorld w = (BallWorld) getWorld();
 			w.getScore().setScore(w.getScore().getScore() + 100);
+			w.remove(brick);
 		}
 		
 	}
