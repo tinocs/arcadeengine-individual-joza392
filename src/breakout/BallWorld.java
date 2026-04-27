@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+import engine.Sound;
 import engine.World;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -21,6 +22,7 @@ public class BallWorld extends World{
 	private Lives lives;
 	private Ball b;
 	private boolean isPaused = true;
+	private boolean isOver = true;
 	private boolean lostShown = false;
 	
 	public BallWorld() {
@@ -32,8 +34,12 @@ public class BallWorld extends World{
 		
 		
 		if (isPaused == false) {
+			
 			if (getLives().getLives() <= 0 && lostShown == false) {
-				Text gameLost = new Text("Game Over! press any key to go back");
+				Text gameLost = new Text("Game Lost! press any key to go back");
+				isOver = true;
+				Sound gameLostSound = new Sound("breakoutresources/game_lost.wav");
+				gameLostSound.play();
 				gameLost.setFont(new Font(20));
 				gameLost.setX(getWidth()/2);
 				gameLost.setY(getHeight()/2);
@@ -50,6 +56,7 @@ public class BallWorld extends World{
 					}
 				});
 			}
+			
 			boolean zeroBricks = true;
 			for(Node n: getChildren()) {
 				if (n instanceof Brick) {
@@ -60,11 +67,14 @@ public class BallWorld extends World{
 			if (zeroBricks == true) {
 				level++;
 				if(level >=3) {
-					Text gameOver = new Text("Game Over! press any key to go back");
-					gameOver.setFont(new Font(20));
-					gameOver.setX(getWidth()/2);
-					gameOver.setY(getHeight()/2);
-					getChildren().add(gameOver);
+					Text gameWon = new Text("Game Won! press any key to go back");
+					Sound gameWonSound = new Sound("breakoutresources/game_won.wav");
+					gameWonSound.play();
+					isOver = true;
+					gameWon.setFont(new Font(20));
+					gameWon.setX(getWidth()/2);
+					gameWon.setY(getHeight()/2);
+					getChildren().add(gameWon);
 					setOnKeyPressed(e -> {
 						Stage s = (Stage) getScene().getWindow();
 						Breakout b = new Breakout();
@@ -112,7 +122,7 @@ public class BallWorld extends World{
 	@Override
 	public void onDimensionsInitialized() {
 		
-		
+		isOver = false;
 		setOnMousePressed(e -> {
 			if (e.getButton() == MouseButton.PRIMARY) {
 				isPaused = false;
@@ -199,6 +209,14 @@ public class BallWorld extends World{
 	
 	public void setPaused(boolean paused) {
 		isPaused = paused;
+	}
+	
+	public boolean getOver() {
+		return isOver;
+	}
+	
+	public void setOver(boolean over) {
+		isOver = over;
 	}
 
 
