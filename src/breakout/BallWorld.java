@@ -2,14 +2,18 @@ package breakout;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.List;
 import java.util.Scanner;
 
+import engine.Actor;
 import engine.Sound;
 import engine.World;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -28,40 +32,46 @@ public class BallWorld extends World{
 	private boolean isPaused = true;
 	private boolean isOver = true;
 	private boolean lostShown = false;
+	private ImageView bgView;
+	private Paddle p;
 	
 	public BallWorld() {
 		setPrefSize(800, 600);
+		setFocusTraversable(true);
 	}
 
 	@Override
 	public void act(long now) {
+		if (getLives().getLives() <= 0 && lostShown == false) {
+			isOver = true;
+			Sound gameLostSound = new Sound("breakoutresources/game_lost.wav");
+			gameLostSound.play();
+			
+			lostShown = true;
+			
+			String message = "Game Over. You Lose.";  
+		    Alert a = new Alert(AlertType.INFORMATION, message, ButtonType.OK);  
+		    a.showAndWait(); 
+			
+			Stage s = (Stage) getScene().getWindow();
+			Breakout b = new Breakout();
+			try {
+				b.start(s);
+				return;
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return;
+			}
+			
+		}
 		
-		
+		if (isKeyPressed(KeyCode.SPACE)) {
+			isPaused = false;
+		}
 		if (isPaused == false) {
 			
-			if (getLives().getLives() <= 0 && lostShown == false) {
-				isOver = true;
-				Sound gameLostSound = new Sound("breakoutresources/game_lost.wav");
-				gameLostSound.play();
-				
-				lostShown = true;
-				
-				String message = "Game Over. You Lose.";  
-			    Alert a = new Alert(AlertType.INFORMATION, message, ButtonType.OK);  
-			    a.showAndWait(); 
-				
-				Stage s = (Stage) getScene().getWindow();
-				Breakout b = new Breakout();
-				try {
-					b.start(s);
-					return;
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					return;
-				}
-				
-			}
+			
 			
 			boolean zeroBricks = true;
 			for(Node n: getChildren()) {
@@ -135,11 +145,21 @@ public class BallWorld extends World{
 				isPaused = false;
 			}
 		});
-		setOnKeyPressed(e -> {
-		    if (e.getCode() == KeyCode.SPACE) {
-		        isPaused = false;
-		    }
-		});
+//		setOnKeyPressed(e -> {
+//			
+//
+//			
+//			
+//		    if (e.getCode() == KeyCode.SPACE) {
+//		        isPaused = false;
+//		    }
+//		});
+		
+		String path = getClass().getClassLoader().getResource("breakoutresources/breakout_background.png").toString();
+		Image bg = new Image(path);
+		bgView = new ImageView(bg);
+		bgView.setX(getScene().getWidth()/2 - bg.getWidth()/2);
+		getChildren().add(bgView);
 		
 		level = 1;
 		b = new Ball();
@@ -147,18 +167,20 @@ public class BallWorld extends World{
 		b.setX(getWidth()/2);
 		b.setY(3 * getHeight()/4 - 20);
 		
-		Paddle p = new Paddle();
+		p = new Paddle();
 		add(p);
 		p.setX(getWidth()/2);
 		p.setY(3 * getHeight() /4);
 		
+	
 		
-		setOnMouseMoved(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				if (event.getX() < getWidth() - p.getImage().getWidth())
-				p.setX(event.getX());
-			}});
+		
+//		setOnMouseMoved(new EventHandler<MouseEvent>() {
+//			@Override
+//			public void handle(MouseEvent event) {
+//				if (event.getX() < getWidth() - p.getImage().getWidth())
+//				p.setX(event.getX());
+//			}});
 		
 		score = new Score();
 		score.setX(getWidth()/2 + 50);
@@ -224,6 +246,19 @@ public class BallWorld extends World{
 	
 	public void setOver(boolean over) {
 		isOver = over;
+	}
+	
+	public void scroll(double dx) {
+		// For now, only move the background by the OPPOSITE of dx.
+		// For example, if dx was 5 then you would move the background by -5.
+		
+		if (bgView.getX() + dx <= 0 && bgView.getX() + dx >= getScene().getWidth() - bgView.getImage().getWidth()) {
+			bgView.setX(bgView.getX() + dx);
+			List<Actor> actors = getObjects(Actor.class);
+			for (Actor a: actors) {
+				a.setX(a.getX() + dx);
+			}
+		}
 	}
 
 

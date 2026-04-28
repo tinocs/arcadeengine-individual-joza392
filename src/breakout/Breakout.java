@@ -41,7 +41,7 @@ public class Breakout extends Application{
 			Scene level1 = new Scene(root);
 			stage.setScene(level1);
 			world.start();
-			world.requestFocus();
+			world.requestFocus();			
 		});
 		
 		

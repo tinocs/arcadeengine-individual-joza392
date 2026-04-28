@@ -13,6 +13,7 @@ public class Ball extends Actor{
 	private int dx;
 	private int dy;
 	private Paddle p;
+	private boolean touched = false;
 	@Override
 	
 	public void act(long now) {
@@ -34,6 +35,13 @@ public class Ball extends Actor{
 					dy = -dy;
 				}
 				
+				if (getOneIntersectingObject(Paddle.class) != null) {
+					p = (Paddle) getOneIntersectingObject(Paddle.class);
+					Sound bounceSound = new Sound("breakoutresources/ball_bounce.wav");
+					bounceSound.play();
+					dy = -dy;
+				}
+				
 				if (getY() + getHeight() >= getWorld().getHeight()) {
 					BallWorld w = (BallWorld) getWorld();
 					w.getScore().setScore(w.getScore().getScore() - 1000);
@@ -43,50 +51,48 @@ public class Ball extends Actor{
 					
 					
 					w.getLives().setLives(w.getLives().getLives() - 1);
-					
+					p = (Paddle) getWorld().getObjects(Paddle.class).get(0);
 					setX(p.getX() + p.getImage().getWidth()/2);
 				    setY(3 * getWorld().getHeight()/4 - 20);
 	
-				    dx = 5;
+				    dx = 3;
 				    dy = -5;
 				}
 				
-				if (getOneIntersectingObject(Paddle.class) != null) {
-					p = (Paddle) getOneIntersectingObject(Paddle.class);
-					Sound bounceSound = new Sound("breakoutresources/ball_bounce.wav");
-					bounceSound.play();
-					dy = -dy;
-				}
 				
-				if (getOneIntersectingObject(Brick.class) != null) {
-					Brick brick = getOneIntersectingObject(Brick.class);
-					Sound hitBrickSound = new Sound("breakoutresources/brick_hit.wav");
-					hitBrickSound.play();
-					BallWorld w = (BallWorld) getWorld();
-					FadeTransition ft = new FadeTransition(Duration.millis(100), brick);
-					ft.setFromValue(1.0);
-					ft.setToValue(0.0);
-
-					ft.play();
-					ft.setOnFinished(e ->{
-						w.remove(brick);
-					});
-					
-					if (getX() >= brick.getX() - brick.getWidth()/2 && getX() <= brick.getX() + brick.getWidth()/2) {
+				if (touched == false) {
+					if (getOneIntersectingObject(Brick.class) != null) {
+						touched = true;
+						Brick brick = getOneIntersectingObject(Brick.class);
+						Sound hitBrickSound = new Sound("breakoutresources/brick_hit.wav");
+						hitBrickSound.play();
+						BallWorld w = (BallWorld) getWorld();
+						FadeTransition ft = new FadeTransition(Duration.millis(100), brick);
+						ft.setFromValue(1.0);
+						ft.setToValue(0.0);
+	
+						ft.play();
+						ft.setOnFinished(e ->{
+							w.remove(brick);
+							touched = false;
+						});
 						
-						dy = -dy;
-					}else if (getY() >= brick.getY() - brick.getHeight()/2 && getY() <= brick.getY() + brick.getHeight()/2) {
+						if (getX() >= brick.getX() - brick.getWidth()/2 && getX() <= brick.getX() + brick.getWidth()/2) {
+							
+							dy = -dy;
+						}else if (getY() >= brick.getY() - brick.getHeight()/2 && getY() <= brick.getY() + brick.getHeight()/2) {
+							
+							dx = -dx;
+						}else {
+							
+							dx = -dx;
+							dy = -dy;
+						}
 						
-						dx = -dx;
-					}else {
 						
-						dx = -dx;
-						dy = -dy;
+						w.getScore().setScore(w.getScore().getScore() + 100);
+						
 					}
-					
-					
-					w.getScore().setScore(w.getScore().getScore() + 100);
-					
 				}
 			}
 		}
@@ -97,7 +103,7 @@ public class Ball extends Actor{
 		String path = getClass().getClassLoader().getResource("breakoutresources/ball.png").toString();
 		Image img = new Image(path);
 		setImage(img);
-		dx = 5;
+		dx = 3;
 		dy = -5;
 	}
 
