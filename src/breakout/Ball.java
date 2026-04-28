@@ -55,8 +55,8 @@ public class Ball extends Actor{
 					setX(p.getX() + p.getImage().getWidth()/2);
 				    setY(3 * getWorld().getHeight()/4 - 20);
 	
-				    dx = 3;
-				    dy = -5;
+				    dx = 4;
+				    dy = -4;
 				}
 				
 				
@@ -103,8 +103,8 @@ public class Ball extends Actor{
 		String path = getClass().getClassLoader().getResource("breakoutresources/ball.png").toString();
 		Image img = new Image(path);
 		setImage(img);
-		dx = 3;
-		dy = -5;
+		dx = 4;
+		dy = -4;
 	}
 
 }
